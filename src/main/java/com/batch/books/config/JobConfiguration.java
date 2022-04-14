@@ -44,7 +44,7 @@ public class JobConfiguration {
     @Bean
     public FlatFileItemReader<String> itemReader() {
         FlatFileItemReader<String> flatFileItemReader = new FlatFileItemReader<>();
-        flatFileItemReader.setResource(new FileSystemResource("src/main/resources/dumps/author_10_lines"));
+        flatFileItemReader.setResource(new FileSystemResource("src/main/resources/dumps/books.txt"));
         flatFileItemReader.setName("author-json-reader");
         flatFileItemReader.setLineMapper(new PassThroughLineMapper());
         return flatFileItemReader;

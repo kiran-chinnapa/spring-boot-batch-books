@@ -18,7 +18,11 @@ import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.batch.test.StepScopeTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 
@@ -62,8 +66,8 @@ class BooksApplicationTests {
         StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
 
         StepScopeTestUtils.doInStepScope(stepExecution, () -> {
-            String jsonLine = "{\"type\": {\"key\": \"/type/edition\"}, \"authors\": [{\"key\": \"/authors/OL3103822A\"}], \"isbn_13\": [\"9781638353584\"], \"languages\": [{\"key\": \"/languages/eng\"}], \"publish_date\": \"2015\", \"publishers\": [\"Manning Publications Co. LLC\"], \"source_records\": [\"bwb:9781638353584\"], \"title\": \"Spring Boot in Action\", \"pagination\": \"264\", \"full_title\": \"Spring Boot in Action\", \"works\": [{\"key\": \"/works/OL19545478W\"}], \"key\": \"/books/OL34983242M\", \"latest_revision\": 1, \"revision\": 1, \"created\": {\"type\": \"/type/datetime\", \"value\": \"2021-10-09T17:28:54.587731\"}, \"last_modified\": {\"type\": \"/type/datetime\", \"value\": \"2021-10-09T17:28:54.587731\"}}";
-            String result = String.valueOf(itemProcessor.process(jsonLine));
+            String jsonLine = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/authors.json")));
+            BookRecord result = itemProcessor.process(jsonLine);
             Assert.assertEquals(jsonLine, result);
             log.info("mocked process is working fine");
             return result;
@@ -79,7 +83,7 @@ class BooksApplicationTests {
         StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
 
         StepScopeTestUtils.doInStepScope(stepExecution, () -> {
-            String jsonLine = "{\"browsers\":{\"firefox\":{\"name\":\"Firefox\"," + "\"pref_url\":\"about:config\",\"releases\":{\"1\":{\"release_date\":\"2004-11-09\"," + "\"status\":\"retired\",\"engine\":\"Gecko\",\"engine_version\":\"1.7\"}}}}}";
+            String jsonLine = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/authors.json")));
             itemWriter.write(Arrays.asList(new BookRecord(1l)));
             log.info("mocked writer is working fine");
             return null;
