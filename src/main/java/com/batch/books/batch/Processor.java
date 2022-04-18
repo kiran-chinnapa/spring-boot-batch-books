@@ -1,40 +1,27 @@
 package com.batch.books.batch;
 
-import com.batch.books.model.BookRecord;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.batch.books.mapper.GridMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Map;
 
 @Component
-public class Processor implements ItemProcessor<String, BookRecord> {
+public class Processor implements ItemProcessor<String, String> {
 
-    @Value("#{'${books.grid.columns}'.split(',')}")
-    private List<String> gridColumns;
+    @Autowired
+    private GridMapper gridMapper;
 
-    private String formatList(List l){
-        return l.toString().replaceAll("\\[","");
-    }
+    @Autowired
+    private ObjectMapper jsonObjectMapper;
 
     @Override
-    public BookRecord process(String item) throws Exception {
-
+    public String process(String item) throws Exception {
+        String key = item.substring(0,item.indexOf('{')).split("\t")[1];
         String jsonStr = item.substring(item.indexOf('{'));
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
-        BookRecord book = null;
-        try {
-            book = mapper.readValue(jsonStr, BookRecord.class);
-            item = new ObjectMapper().writeValueAsString(book.toString());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw e;
-        }
-
-        return new BookRecord(1l);
+        Map<Object, Object> map = jsonObjectMapper.readValue(jsonStr, Map.class);
+        return gridMapper.mapColumns(map, key);
     }
 }

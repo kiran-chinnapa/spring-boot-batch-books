@@ -1,6 +1,5 @@
 package com.batch.books.config;
 
-import com.batch.books.model.BookRecord;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -12,6 +11,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.PassThroughLineMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -20,15 +20,18 @@ import org.springframework.core.io.FileSystemResource;
 @EnableBatchProcessing
 public class JobConfiguration {
 
+    @Value("${books.grid.chunk.size}")
+    private int chunkSize;
+
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory,
                    StepBuilderFactory stepBuilderFactory,
                    ItemReader<String> mapItemReader,
-                   ItemProcessor<String, BookRecord> mapItemProcessor,
-                   ItemWriter<BookRecord> mapItemWriter) {
+                   ItemProcessor<String, String> mapItemProcessor,
+                   ItemWriter<String> mapItemWriter) {
 
         Step step = stepBuilderFactory.get("openLibrary-ETL")
-                .<String, BookRecord>chunk(100)
+                .<String, String>chunk(chunkSize)
                 .reader(mapItemReader)
                 .processor(mapItemProcessor)
                 .writer(mapItemWriter)
