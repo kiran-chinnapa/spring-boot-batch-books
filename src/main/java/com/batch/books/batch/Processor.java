@@ -22,6 +22,7 @@ public class Processor implements ItemProcessor<String, String> {
         String key = item.substring(0,item.indexOf('{')).split("\t")[1];
         String jsonStr = item.substring(item.indexOf('{'));
         Map<Object, Object> map = jsonObjectMapper.readValue(jsonStr, Map.class);
+
         return gridMapper.mapColumns(map, key);
     }
 }

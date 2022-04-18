@@ -83,8 +83,8 @@ class BooksApplicationTests {
         StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
 
         StepScopeTestUtils.doInStepScope(stepExecution, () -> {
-            String jsonLine = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/authors.json")));
-            itemWriter.write(Arrays.asList("abd"));
+            String jsonLine = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/gridRow.json")));
+            itemWriter.write(Arrays.asList(jsonLine));
             log.info("mocked writer is working fine");
             return null;
         });
@@ -93,11 +93,8 @@ class BooksApplicationTests {
     @Test
     public void testMockLaunchController() throws Exception {
         HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
-
         HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
-
         System.out.println("response status" + response.getStatusLine().getStatusCode());
-
         System.out.println("response message" + EntityUtils.toString(response.getEntity()));
     }
 

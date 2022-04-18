@@ -22,7 +22,8 @@ public class Writer implements ItemWriter<String> {
 
     @Override
     public void write(List<? extends String> items) throws Exception {
-        logger.info("mocked writer is working");
+
+        // need to add rows logic from python
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
@@ -33,6 +34,7 @@ public class Writer implements ItemWriter<String> {
     }
 
     private void postToApi(String json, HttpHeaders headers){
+        logger.info(json);
         HttpEntity<String> httpEntity = new HttpEntity<>(json,headers);
         String response= restTemplate.postForObject(
                 "https://qa.bigparser.com/api/v2/grid/624fab6112643c28811d05b3/rows/bulk_create",
