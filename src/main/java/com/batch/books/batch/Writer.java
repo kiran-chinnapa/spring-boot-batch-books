@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,9 @@ public class Writer implements ItemWriter<String> {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Value("${grid.books.grid.id}")
+    private String gridId;
+
     @Override
     public void write(List<? extends String> items) throws Exception {
 
@@ -34,10 +38,10 @@ public class Writer implements ItemWriter<String> {
     }
 
     private void postToApi(String json, HttpHeaders headers){
-        logger.info(json);
+        logger.info("addRow json string-->"+json);
         HttpEntity<String> httpEntity = new HttpEntity<>(json,headers);
         String response= restTemplate.postForObject(
-                "https://qa.bigparser.com/api/v2/grid/624fab6112643c28811d05b3/rows/bulk_create",
+                "https://qa.bigparser.com/api/v2/grid/"+gridId+"/rows/bulk_create",
                 httpEntity,
                 String.class
         );

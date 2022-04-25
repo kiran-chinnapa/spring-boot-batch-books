@@ -18,7 +18,9 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.batch.test.StepScopeTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -79,15 +81,8 @@ class BooksApplicationTests {
 
     @Test
     public void testMockedItemWriter() throws Exception {
-
-        StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
-
-        StepScopeTestUtils.doInStepScope(stepExecution, () -> {
             String jsonLine = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/gridRow.json")));
-            itemWriter.write(Arrays.asList(jsonLine));
-            log.info("mocked writer is working fine");
-            return null;
-        });
+            Assert.assertThrows(HttpServerErrorException.class,()->itemWriter.write(Arrays.asList(jsonLine)));
     }
 
     @Test
@@ -104,10 +99,17 @@ class BooksApplicationTests {
     @Autowired
     private ObjectMapper jsonObjmapper;
 
+    @Value("${grid.add.row.envelope}")
+    private String addRowEnvelope;
+
+    @Autowired
+    private ObjectMapper jsonObjectMapper;
+
     @Test
     public void testEditionGridMapper() throws Exception {
         String editionJson = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/editions.json")));
-        String writeJson = gridMapper.mapColumns(jsonObjmapper.readValue(editionJson, Map.class), "edition");
+        Map<Object,Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);
+        String writeJson = gridMapper.mapColumns(jsonObjmapper.readValue(editionJson, Map.class), "edition", envMap);
         List<String> gridColumns = Arrays.asList("Year First Published", "Year Latest Edition", "Name", "Publisher", "Location");
         log.info(writeJson);
         Assert.assertTrue(writeJson, gridColumns.stream().allMatch(s -> writeJson.contains(s)));
@@ -116,7 +118,8 @@ class BooksApplicationTests {
     @Test
     public void testAuthorGridMapper() throws Exception {
         String authorsJson = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/authors.json")));
-        String writeJson = gridMapper.mapColumns(jsonObjmapper.readValue(authorsJson, Map.class), "author");
+        Map<Object,Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);
+        String writeJson = gridMapper.mapColumns(jsonObjmapper.readValue(authorsJson, Map.class), "author", envMap);
         List<String> gridColumns = Arrays.asList("Author");
         log.info(writeJson);
         Assert.assertTrue(writeJson, gridColumns.stream().allMatch(s -> writeJson.contains(s)));
@@ -125,7 +128,8 @@ class BooksApplicationTests {
     @Test
     public void testWorksGridMapper() throws Exception {
         String worksJson = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/works.json")));
-        String writeJson = gridMapper.mapColumns(jsonObjmapper.readValue(worksJson, Map.class), "work");
+        Map<Object,Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);
+        String writeJson = gridMapper.mapColumns(jsonObjmapper.readValue(worksJson, Map.class), "work", envMap);
         List<String> gridColumns = Arrays.asList("Description");
         log.info(writeJson);
         Assert.assertTrue(writeJson, gridColumns.stream().allMatch(s -> writeJson.contains(s)));

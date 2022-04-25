@@ -13,7 +13,7 @@ public class GridMapper {
     @Autowired
     private ObjectMapper jsonObjectMapper;
 
-    public String mapColumns(Map<Object, Object> jsonMap, String key) throws JsonProcessingException {
+    public String mapColumns(Map<Object, Object> jsonMap, String key, Map<Object, Object> envMap) throws JsonProcessingException {
 
         Map<String, Object> returnMap = new HashMap<>();
 
@@ -40,8 +40,9 @@ public class GridMapper {
         returnMap.put("Location",
                 parseValue(Optional.ofNullable(jsonMap.get("location")).orElse("")));
 
+        ((List)((Map)envMap.get("insert")).get("rows")).add(returnMap);
 
-        return jsonObjectMapper.writeValueAsString(returnMap);
+        return jsonObjectMapper.writeValueAsString(envMap);
     }
 
     private String parseValue(Object o) {
