@@ -23,6 +23,9 @@ public class JobConfiguration {
     @Value("${books.grid.chunk.size}")
     private int chunkSize;
 
+    @Value("${books.grid.read.file.path}")
+    private String filePath;
+
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory,
                    StepBuilderFactory stepBuilderFactory,
@@ -47,7 +50,7 @@ public class JobConfiguration {
     @Bean
     public FlatFileItemReader<String> itemReader() {
         FlatFileItemReader<String> flatFileItemReader = new FlatFileItemReader<>();
-        flatFileItemReader.setResource(new FileSystemResource("src/main/resources/dumps/books.txt"));
+        flatFileItemReader.setResource(new FileSystemResource(filePath));
         flatFileItemReader.setName("author-json-reader");
         flatFileItemReader.setLineMapper(new PassThroughLineMapper());
         return flatFileItemReader;

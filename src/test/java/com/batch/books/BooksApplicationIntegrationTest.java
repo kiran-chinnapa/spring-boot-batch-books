@@ -12,11 +12,15 @@ public class BooksApplicationIntegrationTest {
 
     @Test
     public void testMockLaunchController() throws Exception {
-        BooksApplication.main(new String[]{});
+        BooksApplication.main(new String[]{"--books.grid.read.file.path=src/main/resources/dumps/complexBooks.txt"});
         HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
         HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
         System.out.println("response status" + response.getStatusLine().getStatusCode());
         System.out.println("response message" + EntityUtils.toString(response.getEntity()));
+    }
+
+    @Test
+    public void test1EditionMultipleEditionAuthorsWorks(){
     }
 
 }
