@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
@@ -53,7 +52,12 @@ public class BooksApplicationIntegrationTest {
 
     @Test
     public void test1EditionManyAuthorsManyWorks() throws Exception {
-//        testHelper("src/main/resources/dumps/1EditionManyAuthorsManyWorks.txt");
+        String dataFile = "src/main/resources/dumps/1EditionManyAuthorsManyWorks.txt";
+        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
+        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
+        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
+        System.out.println("response status" + response.getStatusLine().getStatusCode());
+        System.out.println("response message" + EntityUtils.toString(response.getEntity()));
     }
 
     @Test
