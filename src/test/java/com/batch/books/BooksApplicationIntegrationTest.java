@@ -68,7 +68,7 @@ public class BooksApplicationIntegrationTest {
     public void testSimpleLaunchController() throws Exception {
         truncateGrid();
         logger.info("sleeping .......");
-        Thread.sleep(30000);
+        Thread.sleep(1000);
         String dataFile = "src/main/resources/dumps/1Work1Author1Edition.txt";
         BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
         HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
@@ -81,7 +81,7 @@ public class BooksApplicationIntegrationTest {
     public void test1EditionManyAuthorsManyWorks() throws Exception {
         truncateGrid();
         logger.info("sleeping .......");
-        Thread.sleep(30000);
+        Thread.sleep(1000);
         String dataFile = "src/main/resources/dumps/1EditionManyAuthorsManyWorks.txt";
         BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
         HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
