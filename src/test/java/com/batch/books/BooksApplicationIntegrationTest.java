@@ -28,8 +28,8 @@ public class BooksApplicationIntegrationTest {
     @Value("${grid.qa.authId}")
     private String authId;
 
-
-    private void truncateGrid() {
+    @Test
+    public void truncateGrid() {
         try {
             String delete_grid = "{\n" +
                     "    \"delete\": {\n" +
@@ -77,27 +77,27 @@ public class BooksApplicationIntegrationTest {
         System.out.println("response message" + EntityUtils.toString(response.getEntity()));
     }
 
-    @Test
-    public void test1EditionManyAuthorsManyWorks() throws Exception {
-        truncateGrid();
-        logger.info("sleeping .......");
-        Thread.sleep(1000);
-        String dataFile = "src/main/resources/dumps/1EditionManyAuthorsManyWorks.txt";
-        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
-        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
-        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
-        logger.info("response status" + response.getStatusLine().getStatusCode());
-        logger.info("response message" + EntityUtils.toString(response.getEntity()));
-    }
-
-    @Test
-    public void test1WorkManyAuthors() throws Exception {
-//        testHelper("src/main/resources/dumps/1WorkManyAuthors.txt");
-    }
-
-    @Test
-    public void test1Author() throws Exception {
-//        testHelper("src/main/resources/dumps/1Author.txt");
-    }
+//    @Test
+//    public void test1EditionManyAuthorsManyWorks() throws Exception {
+//        truncateGrid();
+//        logger.info("sleeping .......");
+//        Thread.sleep(1000);
+//        String dataFile = "src/main/resources/dumps/1EditionManyAuthorsManyWorks.txt";
+//        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
+//        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
+//        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
+//        logger.info("response status" + response.getStatusLine().getStatusCode());
+//        logger.info("response message" + EntityUtils.toString(response.getEntity()));
+//    }
+//
+//    @Test
+//    public void test1WorkManyAuthors() throws Exception {
+////        testHelper("src/main/resources/dumps/1WorkManyAuthors.txt");
+//    }
+//
+//    @Test
+//    public void test1Author() throws Exception {
+////        testHelper("src/main/resources/dumps/1Author.txt");
+//    }
 
 }
