@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -24,9 +23,9 @@ public class Processor implements ItemProcessor<String, String> {
 
     @Override
     public String process(String item) throws Exception {
-        String key = item.substring(0,item.indexOf('{')).split("\t")[1];
+        String key = item.substring(0, item.indexOf('{')).split("\t")[1];
         String jsonStr = item.substring(item.indexOf('{'));
-        Map<Object,Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);
+        Map<Object, Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);
         Map<Object, Object> map = jsonObjectMapper.readValue(jsonStr, Map.class);
         return gridMapper.mapColumns(map, key, envMap);
     }

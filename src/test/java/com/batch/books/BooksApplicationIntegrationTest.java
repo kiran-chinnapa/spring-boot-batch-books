@@ -19,17 +19,45 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootTest
 public class BooksApplicationIntegrationTest {
 
-   static Logger logger = LoggerFactory.getLogger(BooksApplicationIntegrationTest.class);
-   private static RestTemplate restTemplate =new RestTemplate();
+    static Logger logger = LoggerFactory.getLogger(BooksApplicationIntegrationTest.class);
+    private static RestTemplate restTemplate = new RestTemplate();
 
     @Value("${grid.books.grid.id}")
-    private String gridId;
+    protected String bookGridId;
+
+    @Value("${grid.books.work.grid.id}")
+    protected String workGridId;
+
+    @Value("${grid.books.edition.grid.id}")
+    protected String editionGridId;
+
+    @Value("${grid.books.author.grid.id}")
+    protected String authorGridId;
 
     @Value("${grid.qa.authId}")
     private String authId;
 
     @Test
-    public void truncateGrid() {
+    public void truncateBooks(){
+        truncateBooksGrid(bookGridId);
+    }
+
+    @Test
+    public void truncateAuthors(){
+        truncateBooksGrid(authorGridId);
+    }
+
+    @Test
+    public void truncateEditions(){
+        truncateBooksGrid(editionGridId);
+    }
+
+    @Test
+    public void truncateWorks(){
+        truncateBooksGrid(workGridId);
+    }
+
+    private void truncateBooksGrid(String gridId) {
         try {
             String delete_grid = "{\n" +
                     "    \"delete\": {\n" +
@@ -49,10 +77,10 @@ public class BooksApplicationIntegrationTest {
             headers.set("Content-Type", "application/json");
 //            headers.set("Accept", "application/json");
             headers.set("authId", authId);
-            logger.info("delete json string-->"+delete_grid);
-            HttpEntity<String> httpEntity = new HttpEntity<>(delete_grid,headers);
+            logger.info("delete json string-->" + delete_grid);
+            HttpEntity<String> httpEntity = new HttpEntity<>(delete_grid, headers);
             restTemplate.exchange(
-                    "https://qa.bigparser.com/api/v2/grid/"+gridId+"/rows/delete_by_queryObj",
+                    "https://qa.bigparser.com/api/v2/grid/" + gridId + "/rows/delete_by_queryObj",
                     HttpMethod.DELETE,
                     httpEntity, String.class
             );
@@ -64,25 +92,24 @@ public class BooksApplicationIntegrationTest {
     }
 
 
-    @Test
-    public void testSimpleLaunchController() throws Exception {
-        truncateGrid();
-        logger.info("sleeping .......");
-        Thread.sleep(1000);
-        String dataFile = "src/main/resources/dumps/1Work1Author1Edition.txt";
-        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
-        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
-        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
-        System.out.println("response status" + response.getStatusLine().getStatusCode());
-        System.out.println("response message" + EntityUtils.toString(response.getEntity()));
-    }
+//    @Test
+//    public void testSimpleLaunchController() throws Exception {
+//        logger.info("sleeping .......");
+//        Thread.sleep(1000);
+//        String dataFile = "src/main/resources/dumps/Edition.txt";
+//        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
+//        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
+//        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
+//        System.out.println("response status" + response.getStatusLine().getStatusCode());
+//        System.out.println("response message" + EntityUtils.toString(response.getEntity()));
+//    }
 
 //    @Test
 //    public void test1EditionManyAuthorsManyWorks() throws Exception {
 //        truncateGrid();
 //        logger.info("sleeping .......");
 //        Thread.sleep(1000);
-//        String dataFile = "src/main/resources/dumps/1EditionManyAuthorsManyWorks.txt";
+//        String dataFile = "src/main/resources/dumps/Edition.txt";
 //        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
 //        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
 //        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
@@ -92,12 +119,12 @@ public class BooksApplicationIntegrationTest {
 //
 //    @Test
 //    public void test1WorkManyAuthors() throws Exception {
-////        testHelper("src/main/resources/dumps/1WorkManyAuthors.txt");
+////        testHelper("src/main/resources/dumps/Work.txt");
 //    }
 //
 //    @Test
 //    public void test1Author() throws Exception {
-////        testHelper("src/main/resources/dumps/1Author.txt");
+////        testHelper("src/main/resources/dumps/Author.txt");
 //    }
 
 }

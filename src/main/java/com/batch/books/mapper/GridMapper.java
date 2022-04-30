@@ -1,8 +1,11 @@
 package com.batch.books.mapper;
 
+import com.batch.books.BooksApplication;
+import com.batch.books.batch.Processor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -10,37 +13,63 @@ import java.util.*;
 @Component
 public class GridMapper {
 
+    @Value("${grid.books.grid.id}")
+    protected String bookGridId;
+
+    @Value("${grid.books.work.grid.id}")
+    protected String workGridId;
+
+    @Value("${grid.books.edition.grid.id}")
+    protected String editionGridId;
+
+    @Value("${grid.books.author.grid.id}")
+    protected String authorGridId;
+
     @Autowired
     private ObjectMapper jsonObjectMapper;
 
     public String mapColumns(Map<Object, Object> jsonMap, String key, Map<Object, Object> envMap) throws JsonProcessingException {
 
         Map<String, Object> returnMap = new HashMap<>();
-
         returnMap.put("Key", key);
 
-        returnMap.put("Year First Published",
-                Optional.ofNullable(jsonMap.get("publish_date")).orElse(""));
+        if ("work".equals(BooksApplication.gridType)) {
+            System.setProperty("gridId", workGridId);
+            returnMap.put("Description",
+                    parseValue(Optional.ofNullable(jsonMap.get("subjects")).orElse("")));
+            returnMap.put("Year Latest Edition",
+                    parseValue(Optional.ofNullable(jsonMap.get("created")).orElse("")).split("-")[0]);
+            returnMap.put("Name",
+                    Optional.ofNullable(jsonMap.get("title")).orElse(""));
 
-        returnMap.put("Year Latest Edition",
-                parseValue(Optional.ofNullable(jsonMap.get("created")).orElse("")).split("-")[0]);
+        } else if ("author".equals(BooksApplication.gridType)) {
+            System.setProperty("gridId", authorGridId);
+            returnMap.put("Author",
+                    Optional.ofNullable(jsonMap.get("name")).orElse(""));
+            returnMap.put("Year Latest Edition",
+                    parseValue(Optional.ofNullable(jsonMap.get("created")).orElse("")).split("-")[0]);
+            returnMap.put("Location",
+                    parseValue(Optional.ofNullable(jsonMap.get("location")).orElse("")));
 
-        returnMap.put("Name",
-                Optional.ofNullable(jsonMap.get("title")).orElse(""));
+        } else if ("edition".equals(BooksApplication.gridType)) {
+            System.setProperty("gridId", editionGridId);
+            returnMap.put("Author Key", parseValue(Optional.ofNullable(jsonMap.get("authors")).orElse("")));
+            returnMap.put("Work Key", parseValue(Optional.ofNullable(jsonMap.get("works")).orElse("")));
+            returnMap.put("Publisher",
+                    parseValue(Optional.ofNullable(jsonMap.get("publishers")).orElse("")));
+            returnMap.put("Year First Published",
+                    Optional.ofNullable(jsonMap.get("publish_date")).orElse(""));
+            returnMap.put("Year Latest Edition",
+                    parseValue(Optional.ofNullable(jsonMap.get("created")).orElse("")).split("-")[0]);
+            returnMap.put("Name",
+                    Optional.ofNullable(jsonMap.get("title")).orElse(""));
 
-        returnMap.put("Description",
-                parseValue(Optional.ofNullable(jsonMap.get("subjects")).orElse("")));
 
-        returnMap.put("Author",
-                Optional.ofNullable(jsonMap.get("name")).orElse(""));
+        } else {
+            //logic for book
+        }
 
-        returnMap.put("Publisher",
-                parseValue(Optional.ofNullable(jsonMap.get("publishers")).orElse("")));
-
-        returnMap.put("Location",
-                parseValue(Optional.ofNullable(jsonMap.get("location")).orElse("")));
-
-        ((List)((Map)envMap.get("insert")).get("rows")).add(returnMap);
+        ((List) ((Map) envMap.get("insert")).get("rows")).add(returnMap);
 
         return jsonObjectMapper.writeValueAsString(envMap);
     }
@@ -54,8 +83,16 @@ public class GridMapper {
                 lastElement = i.next();
             }
             return parseValue(lastElement);
-        } else if (o instanceof List)
+        } else if (o instanceof List){
+            List<String> returnList = new ArrayList<>();
+            if (((List) o).get(0) instanceof Map){
+                for(Object ol: ((List) o)){
+                    returnList.add(parseValue(ol));
+                }
+                return String.join(",",returnList);
+            }else
             return String.join(",", ((List) o));
+        }
         else return String.valueOf(o);
     }
 }

@@ -1,5 +1,6 @@
 package com.batch.books.batch;
 
+import com.batch.books.BooksApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
@@ -21,9 +22,6 @@ public class Writer implements ItemWriter<String> {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${grid.books.grid.id}")
-    private String gridId;
-
     @Value("${grid.qa.authId}")
     private String authId;
 
@@ -37,17 +35,17 @@ public class Writer implements ItemWriter<String> {
         headers.set("Accept", "application/json");
         headers.set("authId", authId);
 
-        items.stream().forEach((String bookRecord)->postToApi(bookRecord, headers));
+        items.stream().forEach((String bookRecord) -> postToApi(bookRecord, headers));
     }
 
-    private void postToApi(String json, HttpHeaders headers){
-        logger.info("addRow json string-->"+json);
-        HttpEntity<String> httpEntity = new HttpEntity<>(json,headers);
-        String response= restTemplate.postForObject(
-                "https://qa.bigparser.com/api/v2/grid/"+gridId+"/rows/bulk_create",
+    private void postToApi(String json, HttpHeaders headers) {
+        logger.info("addRow json for:" + BooksApplication.gridType + " -->" + json);
+        HttpEntity<String> httpEntity = new HttpEntity<>(json, headers);
+        String response = restTemplate.postForObject(
+                "https://qa.bigparser.com/api/v2/grid/" + System.getProperty("gridId") + "/rows/bulk_create",
                 httpEntity,
                 String.class
         );
-        logger.info("response object ::"+ response);
+        logger.info("response object ::" + response);
     }
 }
