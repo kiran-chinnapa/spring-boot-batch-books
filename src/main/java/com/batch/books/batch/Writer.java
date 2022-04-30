@@ -24,6 +24,9 @@ public class Writer implements ItemWriter<String> {
     @Value("${grid.books.grid.id}")
     private String gridId;
 
+    @Value("${grid.qa.authId}")
+    private String authId;
+
     @Override
     public void write(List<? extends String> items) throws Exception {
 
@@ -32,7 +35,7 @@ public class Writer implements ItemWriter<String> {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "application/json");
-        headers.set("authId", "7ebe66f0-e8cc-4238-b5b2-b627e86df906");
+        headers.set("authId", authId);
 
         items.stream().forEach((String bookRecord)->postToApi(bookRecord, headers));
     }

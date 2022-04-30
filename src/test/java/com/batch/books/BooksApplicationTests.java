@@ -67,7 +67,8 @@ class BooksApplicationTests {
 
     @Test
     public void testMockedItemProcessor() throws Exception {
-        List<String> bookLines = Files.readAllLines(Paths.get("src/main/resources/dumps/books.txt"));
+//        List<String> bookLines = Files.readAllLines(Paths.get("src/main/resources/dumps/1Work1Author1Edition.txt"));
+        List<String> bookLines = Files.readAllLines(Paths.get("src/main/resources/dumps/1EditionManyAuthorsManyWorks.txt"));
         List<String> gridColumns = Arrays.asList("Key");
         for (String bookLine : bookLines) {
             String writeJson = itemProcessor.process(bookLine);
