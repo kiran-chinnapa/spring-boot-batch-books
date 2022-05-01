@@ -90,19 +90,29 @@ public class BooksApplicationIntegrationTest {
             throw new RuntimeException(e);
         }
     }
-
-
+//
 //    @Test
-//    public void testSimpleLaunchController() throws Exception {
-//        logger.info("sleeping .......");
-//        Thread.sleep(1000);
-//        String dataFile = "src/main/resources/dumps/Edition.txt";
-//        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
+//    public void testMockLaunchController() throws Exception {
 //        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
 //        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
 //        System.out.println("response status" + response.getStatusLine().getStatusCode());
 //        System.out.println("response message" + EntityUtils.toString(response.getEntity()));
 //    }
+
+
+    @Test
+    public void testSimpleLaunchController() throws Exception {
+        System.setProperty("gridType","edition");
+        logger.info("sleeping .......");
+        Thread.sleep(1000);
+        String dataFile = "src/main/resources/dumps/Edition.txt";
+        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
+        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
+        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
+        System.out.println("response status" + response.getStatusLine().getStatusCode());
+        System.out.println("response message" + EntityUtils.toString(response.getEntity()));
+        truncateEditions();
+    }
 
 //    @Test
 //    public void test1EditionManyAuthorsManyWorks() throws Exception {

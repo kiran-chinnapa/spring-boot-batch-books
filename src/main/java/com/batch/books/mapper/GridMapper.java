@@ -1,7 +1,6 @@
 package com.batch.books.mapper;
 
 import com.batch.books.BooksApplication;
-import com.batch.books.batch.Processor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +15,6 @@ public class GridMapper {
     @Value("${grid.books.grid.id}")
     protected String bookGridId;
 
-    @Value("${grid.books.work.grid.id}")
-    protected String workGridId;
-
-    @Value("${grid.books.edition.grid.id}")
-    protected String editionGridId;
-
-    @Value("${grid.books.author.grid.id}")
-    protected String authorGridId;
-
     @Autowired
     private ObjectMapper jsonObjectMapper;
 
@@ -34,7 +24,6 @@ public class GridMapper {
         returnMap.put("Key", key);
 
         if ("work".equals(BooksApplication.gridType)) {
-            System.setProperty("gridId", workGridId);
             returnMap.put("Description",
                     parseValue(Optional.ofNullable(jsonMap.get("subjects")).orElse("")));
             returnMap.put("Year Latest Edition",
@@ -43,7 +32,6 @@ public class GridMapper {
                     Optional.ofNullable(jsonMap.get("title")).orElse(""));
 
         } else if ("author".equals(BooksApplication.gridType)) {
-            System.setProperty("gridId", authorGridId);
             returnMap.put("Author",
                     Optional.ofNullable(jsonMap.get("name")).orElse(""));
             returnMap.put("Year Latest Edition",
@@ -52,7 +40,6 @@ public class GridMapper {
                     parseValue(Optional.ofNullable(jsonMap.get("location")).orElse("")));
 
         } else if ("edition".equals(BooksApplication.gridType)) {
-            System.setProperty("gridId", editionGridId);
             returnMap.put("Author Key", parseValue(Optional.ofNullable(jsonMap.get("authors")).orElse("")));
             returnMap.put("Work Key", parseValue(Optional.ofNullable(jsonMap.get("works")).orElse("")));
             returnMap.put("Publisher",

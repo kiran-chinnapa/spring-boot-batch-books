@@ -43,24 +43,24 @@ class BooksApplicationTests {
     @Autowired
     private FlatFileItemReader<String> itemReader;
 
-    @Test
-    public void testMockedItemReader() throws Exception {
-        // given
-        StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
-
-        // when
-        StepScopeTestUtils.doInStepScope(stepExecution, () -> {
-            String jsonLine;
-            itemReader.open(stepExecution.getExecutionContext());
-            while ((jsonLine = itemReader.read()) != null) {
-                // then
-                assertThat(jsonLine.length(), greaterThan(0));
-                log.info("mocked reader is working fine::" + jsonLine);
-            }
-            itemReader.close();
-            return null;
-        });
-    }
+//    @Test
+//    public void testMockedItemReader() throws Exception {
+//        // given
+//        StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
+//
+//        // when
+//        StepScopeTestUtils.doInStepScope(stepExecution, () -> {
+//            String jsonLine;
+//            itemReader.open(stepExecution.getExecutionContext());
+//            while ((jsonLine = itemReader.read()) != null) {
+//                // then
+//                assertThat(jsonLine.length(), greaterThan(0));
+//                log.info("mocked reader is working fine::" + jsonLine);
+//            }
+//            itemReader.close();
+//            return null;
+//        });
+//    }
 
     @Autowired
     private Processor itemProcessor;
@@ -87,14 +87,6 @@ class BooksApplicationTests {
         Assert.assertThrows(HttpServerErrorException.class, () -> itemWriter.write(Arrays.asList(jsonLine)));
     }
 
-    @Test
-    public void testMockLaunchController() throws Exception {
-        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launch");
-        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
-        System.out.println("response status" + response.getStatusLine().getStatusCode());
-        System.out.println("response message" + EntityUtils.toString(response.getEntity()));
-    }
-
     @Autowired
     private GridMapper gridMapper;
 
@@ -109,16 +101,18 @@ class BooksApplicationTests {
 
     @Test
     public void testEditionGridMapper() throws Exception {
+        BooksApplication.gridType= "edition";
         String editionJson = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/editions.json")));
         Map<Object, Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);
         String writeJson = gridMapper.mapColumns(jsonObjmapper.readValue(editionJson, Map.class), "edition", envMap);
-        List<String> gridColumns = Arrays.asList("Year First Published", "Year Latest Edition", "Name", "Publisher", "Location");
+        List<String> gridColumns = Arrays.asList("Year First Published", "Year Latest Edition", "Name", "Publisher");
         log.info(writeJson);
         Assert.assertTrue(writeJson, gridColumns.stream().allMatch(s -> writeJson.contains(s)));
     }
 
     @Test
     public void testAuthorGridMapper() throws Exception {
+        BooksApplication.gridType= "author";
         String authorsJson = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/authors.json")));
         Map<Object, Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);
         String writeJson = gridMapper.mapColumns(jsonObjmapper.readValue(authorsJson, Map.class), "author", envMap);
@@ -129,6 +123,7 @@ class BooksApplicationTests {
 
     @Test
     public void testWorksGridMapper() throws Exception {
+        BooksApplication.gridType= "work";
         String worksJson = new String(Files.readAllBytes(Paths.get("src/main/resources/dumps/works.json")));
         Map<Object, Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);
         String writeJson = gridMapper.mapColumns(jsonObjmapper.readValue(worksJson, Map.class), "work", envMap);
