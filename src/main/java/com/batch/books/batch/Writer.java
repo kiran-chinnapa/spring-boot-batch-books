@@ -10,7 +10,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
 
 
@@ -27,8 +26,6 @@ public class Writer implements ItemWriter<String> {
 
     @Override
     public void write(List<? extends String> items) throws Exception {
-
-        // need to add rows logic from python
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");

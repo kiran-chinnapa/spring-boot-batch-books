@@ -1,6 +1,7 @@
 package com.batch.books.config;
 
 import com.batch.books.BooksApplication;
+import com.batch.books.reader.RestApiReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -17,6 +18,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableBatchProcessing
@@ -61,20 +65,20 @@ public class JobConfiguration {
     }
 
     @Bean
-    public Job job(JobBuilderFactory jobBuilderFactory,
+    public Job fileReaderJob(JobBuilderFactory jobBuilderFactory,
                    StepBuilderFactory stepBuilderFactory,
                    ItemReader<String> mapItemReader,
                    ItemProcessor<String, String> mapItemProcessor,
                    ItemWriter<String> mapItemWriter) {
 
-        Step step = stepBuilderFactory.get("openLibrary-ETL")
+        Step step = stepBuilderFactory.get("fileReader-ETL")
                 .<String, String>chunk(chunkSize)
                 .reader(mapItemReader)
                 .processor(mapItemProcessor)
                 .writer(mapItemWriter)
                 .build();
 
-        return jobBuilderFactory.get("openLibrary-Load")
+        return jobBuilderFactory.get("fileReader-Load")
                 .incrementer(new RunIdIncrementer())
                 .start(step)
                 .build();
@@ -82,10 +86,31 @@ public class JobConfiguration {
     }
 
     @Bean
-    public FlatFileItemReader<String> itemReader() {
+    public Job restApiReaderJob(JobBuilderFactory jobBuilderFactory,
+                   StepBuilderFactory stepBuilderFactory,
+                   ItemReader<Map<Object,Object>> mapItemReader,
+                   ItemProcessor<Map<Object,Object>, String> mapItemProcessor,
+                   ItemWriter<String> mapItemWriter) {
+
+        Step step = stepBuilderFactory.get("restApiReader-ETL")
+                .<Map<Object,Object>, String>chunk(chunkSize)
+                .reader(mapItemReader)
+                .processor(mapItemProcessor)
+                .writer(mapItemWriter)
+                .build();
+
+        return jobBuilderFactory.get("restApiReader-Load")
+                .incrementer(new RunIdIncrementer())
+                .start(step)
+                .build();
+
+    }
+
+    @Bean
+    public FlatFileItemReader<String> fileItemReader() {
         FlatFileItemReader<String> flatFileItemReader = new FlatFileItemReader<>();
         flatFileItemReader.setResource(new FileSystemResource(filePath));
-        flatFileItemReader.setName("author-json-reader");
+        flatFileItemReader.setName("file-json-reader");
         flatFileItemReader.setLineMapper(new PassThroughLineMapper());
         return flatFileItemReader;
     }

@@ -24,15 +24,35 @@ public class LaunchController {
     private JobLauncher jobLauncher;
 
     @Autowired
-    private Job job;
+    private Job fileReaderJob;
 
-    @GetMapping("/launch")
-    public BatchStatus launch() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+    @Autowired
+    private Job restApiReaderJob;
+
+    @GetMapping("/launchFileReader")
+    public BatchStatus launchFileReader() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 
         Map<String, JobParameter> parameterMap = new HashMap<>();
         parameterMap.put("time", new JobParameter(System.currentTimeMillis()));
         JobParameters jobParameters = new JobParameters(parameterMap);
-        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        JobExecution jobExecution = jobLauncher.run(fileReaderJob, jobParameters);
+
+        log.info("status of the job :" + jobExecution.getStatus());
+
+        log.info("Batch is running......");
+        while (jobExecution.isRunning()) {
+            log.info(".....");
+        }
+        return jobExecution.getStatus();
+    }
+
+    @GetMapping("/launchRestApiReader")
+    public BatchStatus launchRestApiReader() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+
+        Map<String, JobParameter> parameterMap = new HashMap<>();
+        parameterMap.put("time", new JobParameter(System.currentTimeMillis()));
+        JobParameters jobParameters = new JobParameters(parameterMap);
+        JobExecution jobExecution = jobLauncher.run(restApiReaderJob, jobParameters);
 
         log.info("status of the job :" + jobExecution.getStatus());
 

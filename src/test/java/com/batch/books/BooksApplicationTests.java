@@ -1,22 +1,20 @@
 package com.batch.books;
 
+import com.batch.books.batch.BookProcessor;
 import com.batch.books.batch.Processor;
 import com.batch.books.batch.Writer;
+import com.batch.books.config.JobConfiguration;
 import com.batch.books.mapper.GridMapper;
+import com.batch.books.reader.RestApiReader;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.junit.Assert;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.test.MetaDataInstanceFactory;
-import org.springframework.batch.test.StepScopeTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,9 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-
 @SpringBootTest
 class BooksApplicationTests {
 
@@ -40,27 +35,33 @@ class BooksApplicationTests {
     void contextLoads() {
     }
 
-    @Autowired
-    private FlatFileItemReader<String> itemReader;
+    @BeforeAll
+    static void setGridType(){
+        BooksApplication.gridType= "edition";
+    }
 
-//    @Test
-//    public void testMockedItemReader() throws Exception {
-//        // given
-//        StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
-//
-//        // when
-//        StepScopeTestUtils.doInStepScope(stepExecution, () -> {
-//            String jsonLine;
-//            itemReader.open(stepExecution.getExecutionContext());
-//            while ((jsonLine = itemReader.read()) != null) {
-//                // then
-//                assertThat(jsonLine.length(), greaterThan(0));
-//                log.info("mocked reader is working fine::" + jsonLine);
-//            }
-//            itemReader.close();
-//            return null;
-//        });
-//    }
+    @Autowired
+    private FlatFileItemReader<String> flatFileItemReader;
+
+    @Autowired
+    private JobConfiguration jobConfiguration;
+
+    @Test
+    public void testFlatFileItemReader() throws Exception{
+        FlatFileItemReader<String> flatFileItemReader =jobConfiguration.fileItemReader();
+        flatFileItemReader.open(new ExecutionContext());
+        log.info(flatFileItemReader.read());
+    }
+
+    @Autowired
+    private RestApiReader restApiReader;
+
+    @Test
+    public void testRestApiItemReader() throws Exception{
+        log.info("rest api response size:"+restApiReader.read().size());
+        Assert.assertTrue(restApiReader.read().size()>0);
+    }
+
 
     @Autowired
     private Processor itemProcessor;
@@ -130,5 +131,16 @@ class BooksApplicationTests {
         List<String> gridColumns = Arrays.asList("Description");
         log.info(writeJson);
         Assert.assertTrue(writeJson, gridColumns.stream().allMatch(s -> writeJson.contains(s)));
+    }
+
+    @Autowired
+    BookProcessor bookProcessor;
+
+    @Test
+    public void testBookProcessor() throws Exception {
+        Map map = restApiReader.read();
+        String json = bookProcessor.process(map);
+        log.info("BookProcessor JSON -->"+ json);
+        Assert.assertTrue(null != json && json.length()>0);
     }
 }
