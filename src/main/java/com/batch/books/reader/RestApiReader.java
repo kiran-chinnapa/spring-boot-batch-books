@@ -32,21 +32,23 @@ public class RestApiReader<T> implements ItemReader<Map<Object,Object>> {
     @Value("${books.grid.chunk.size}")
     private int chunkSize;
 
+    @Value("${grid.books.edition.grid.id}")
+    protected String editionGridId;
+
+    private String query = "";
 
     @PostConstruct
     void contruct(){
-//       query = "{\n" +
-//                "        \"query\": {\n" +
-//                "            \"pagination\": {\n" +
-//                "                \"startRow\": 1,\n" +
-//                "                \"rowCount\": "+chunkSize+"\n" +
-//                "            },\n" +
-//                "            \"showColumnNamesInResponse\": true\n" +
-//                "        }\n" +
-//                "    }";
-        query="";
+       query = "{\n" +
+                "        \"query\": {\n" +
+                "            \"pagination\": {\n" +
+                "                \"startRow\": 1,\n" +
+                "                \"rowCount\": "+chunkSize+"\n" +
+                "            },\n" +
+                "            \"showColumnNamesInResponse\": true\n" +
+                "        }\n" +
+                "    }";
     }
-    private String query = "";
 
 
     @Override
@@ -64,7 +66,7 @@ public class RestApiReader<T> implements ItemReader<Map<Object,Object>> {
         logger.info("search records:" + BooksApplication.gridType + " -->" + json);
         HttpEntity<String> httpEntity = new HttpEntity<>(json, headers);
         return restTemplate.postForObject(
-                "https://qa.bigparser.com/api/v2/grid/" + System.getProperty("gridId") + "/search",
+                "https://qa.bigparser.com/api/v2/grid/" + editionGridId + "/search",
                 httpEntity,
                 Map.class
         );
