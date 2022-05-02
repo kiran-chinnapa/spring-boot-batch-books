@@ -46,7 +46,7 @@ public class BookProcessor implements ItemProcessor<Map<Object, Object>, String>
         List<Map<String, String>> records = ((List) item.get("rows"));
         records.stream().forEach((Map<String, String> m) -> m.putAll(getWorkAuthorMap(m.get("Author Key"), m.get("Work Key"))));
         Map<Object, Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);
-        ((List) ((Map) envMap.get("insert")).get("rows")).add(records);
+        ((List) ((Map) envMap.get("insert")).get("rows")).addAll(records);
         //return a single json string with all the rows
         return jsonObjectMapper.writeValueAsString(envMap);
     }
@@ -67,23 +67,25 @@ public class BookProcessor implements ItemProcessor<Map<Object, Object>, String>
             Map<String, Object> map = jsonObjectMapper.readValue(searchGrid, Map.class);
             ((Map) ((List) ((Map) ((Map) map.get("query")).get("columnFilter")).get("filters")).get(0)).put("keyword", authorKeyword);
             String searchQuery = jsonObjectMapper.writeValueAsString(map);
-            logger.info("search records:" + BooksApplication.gridType + " -->" + searchQuery);
+            logger.info("search records in author grid -->" + searchQuery);
             HttpEntity<String> httpEntity = new HttpEntity<>(searchQuery, headers);
             Map<String, Object> authorMap = restTemplate.postForObject("https://qa.bigparser.com/api/v2/grid/" + authorGridId + "/search", httpEntity, Map.class);
             if (((List) authorMap.get("rows")).size()>0){
                 records = ((Map) ((List) authorMap.get("rows")).get(0));
-                filteredRecords.putAll(records.entrySet().stream().filter(e -> "Key".equals(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+                filteredRecords.putAll(records.entrySet().stream().filter(e -> !"Key".equals(e.getKey()) && null!=e.getValue()).
+                        collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             }else
                 logger.info("no records for authorKeyword:"+authorKeyword);
 
             ((Map) ((List) ((Map) ((Map) map.get("query")).get("columnFilter")).get("filters")).get(0)).put("keyword", workKeyword);
             searchQuery = jsonObjectMapper.writeValueAsString(map);
-            logger.info("search records:" + BooksApplication.gridType + " -->" + searchQuery);
+            logger.info("search records in work grid -->" + searchQuery);
             httpEntity = new HttpEntity<>(searchQuery, headers);
             Map<String, Object> workMap = restTemplate.postForObject("https://qa.bigparser.com/api/v2/grid/" + workGridId + "/search", httpEntity, Map.class);
             if (((List) workMap.get("rows")).size()>0){
                 records = ((Map) ((List) workMap.get("rows")).get(0));
-                filteredRecords.putAll(records.entrySet().stream().filter(e -> "Key".equals(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+                filteredRecords.putAll(records.entrySet().stream().filter(e -> !"Key".equals(e.getKey()) && null!=e.getValue()).
+                        collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             }else
                 logger.info("no records for workKeyword:"+workKeyword);
         } catch (JsonProcessingException e) {

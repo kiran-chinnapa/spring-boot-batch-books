@@ -1,7 +1,6 @@
 package com.batch.books.reader;
 
 import com.batch.books.BooksApplication;
-import com.batch.books.batch.Writer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemReader;
@@ -21,7 +20,7 @@ import java.util.Map;
 @Component
 public class RestApiReader<T> implements ItemReader<Map<Object,Object>> {
 
-    private Logger logger = LoggerFactory.getLogger(Writer.class);
+    private Logger logger = LoggerFactory.getLogger(RestApiReader.class);
 
     @Autowired
     RestTemplate restTemplate;

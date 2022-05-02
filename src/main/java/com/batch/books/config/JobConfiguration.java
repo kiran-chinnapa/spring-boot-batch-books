@@ -39,13 +39,16 @@ public class JobConfiguration {
     private String editionFilePath;
 
     @Value("${grid.books.work.grid.id}")
-    protected String workGridId;
+    private String workGridId;
 
     @Value("${grid.books.edition.grid.id}")
-    protected String editionGridId;
+    private String editionGridId;
 
     @Value("${grid.books.author.grid.id}")
-    protected String authorGridId;
+    private String authorGridId;
+
+    @Value("${grid.books.grid.id}")
+    private String bookGridId;
 
     private String filePath="";
 
@@ -62,6 +65,8 @@ public class JobConfiguration {
             System.setProperty("gridId", editionGridId);
             filePath= editionFilePath;
         }
+        else if ("book".equals(BooksApplication.gridType))
+            System.setProperty("gridId", bookGridId);
     }
 
     @Bean
