@@ -35,6 +35,7 @@ public class RestApiReader<T> implements ItemReader<Map<Object,Object>> {
     protected String editionGridId;
 
     private String query = "";
+    private int readIndex;
 
     @PostConstruct
     void contruct(){
@@ -47,17 +48,22 @@ public class RestApiReader<T> implements ItemReader<Map<Object,Object>> {
                 "            \"showColumnNamesInResponse\": true\n" +
                 "        }\n" +
                 "    }";
+       readIndex=0;
     }
 
 
     @Override
     public Map<Object, Object> read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        headers.set("Accept", "application/json");
-        headers.set("authId", authId);
-        Map response = readRecords(query, headers);
-        logger.info("response object ::" + response.size());
+        Map response = null;
+        if (readIndex< chunkSize){
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
+            headers.set("Accept", "application/json");
+            headers.set("authId", authId);
+            response = readRecords(query, headers);
+            logger.info("response object ::" + response.size());
+            readIndex++;
+        }
         return response;
     }
 

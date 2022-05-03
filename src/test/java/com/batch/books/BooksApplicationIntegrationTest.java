@@ -114,32 +114,32 @@ public class BooksApplicationIntegrationTest {
     }
 
 
-    @Test
-    public void testSimpleLaunchControllerWorks() throws Exception {
-        System.setProperty("gridType","work");
-        logger.info("sleeping .......");
-        Thread.sleep(1000);
-        String dataFile = "src/main/resources/dumps/Work.txt";
-        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
-        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launchFileReader");
-        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
-        System.out.println("response status" + response.getStatusLine().getStatusCode());
-        System.out.println("response message" + EntityUtils.toString(response.getEntity()));
-    }
-
-
-    @Test
-    public void testSimpleLaunchControllerAuthor() throws Exception {
-        System.setProperty("gridType","author");
-        logger.info("sleeping .......");
-        Thread.sleep(1000);
-        String dataFile = "src/main/resources/dumps/Author.txt";
-        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
-        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launchFileReader");
-        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
-        System.out.println("response status" + response.getStatusLine().getStatusCode());
-        System.out.println("response message" + EntityUtils.toString(response.getEntity()));
-    }
+//    @Test
+//    public void testSimpleLaunchControllerWorks() throws Exception {
+//        System.setProperty("gridType","work");
+//        logger.info("sleeping .......");
+//        Thread.sleep(1000);
+//        String dataFile = "src/main/resources/dumps/Work.txt";
+//        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
+//        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launchFileReader");
+//        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
+//        System.out.println("response status" + response.getStatusLine().getStatusCode());
+//        System.out.println("response message" + EntityUtils.toString(response.getEntity()));
+//    }
+//
+//
+//    @Test
+//    public void testSimpleLaunchControllerAuthor() throws Exception {
+//        System.setProperty("gridType","author");
+//        logger.info("sleeping .......");
+//        Thread.sleep(1000);
+//        String dataFile = "src/main/resources/dumps/Author.txt";
+//        BooksApplication.main(new String[]{"--books.grid.read.file.path=" + dataFile});
+//        HttpUriRequest httpUriRequest = new HttpGet("http://localhost:8080/launchFileReader");
+//        HttpResponse response = HttpClientBuilder.create().build().execute(httpUriRequest);
+//        System.out.println("response status" + response.getStatusLine().getStatusCode());
+//        System.out.println("response message" + EntityUtils.toString(response.getEntity()));
+//    }
 
 //    @Test
 //    public void test1EditionManyAuthorsManyWorks() throws Exception {

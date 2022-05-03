@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,12 +54,6 @@ class BooksApplicationTests {
 
     @Autowired
     private RestApiReader restApiReader;
-
-    @Test
-    public void testRestApiItemReader() throws Exception{
-        log.info("rest api response size:"+restApiReader.read().size());
-        Assert.assertTrue(restApiReader.read().size()>0);
-    }
 
 
     @Autowired
