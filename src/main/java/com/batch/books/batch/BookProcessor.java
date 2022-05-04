@@ -1,6 +1,5 @@
 package com.batch.books.batch;
 
-import com.batch.books.BooksApplication;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

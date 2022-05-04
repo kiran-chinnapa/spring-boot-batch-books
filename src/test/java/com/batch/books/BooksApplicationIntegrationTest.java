@@ -37,21 +37,21 @@ public class BooksApplicationIntegrationTest {
     @Value("${grid.qa.authId}")
     private String authId;
 
-    @Test
-    public void truncateBooks(){
-        truncateBooksGrid(bookGridId);
-    }
-
+//    @Test
+//    public void truncateBooks(){
+//        truncateBooksGrid(bookGridId);
+//    }
+//
     @Test
     public void truncateAuthors(){
         truncateBooksGrid(authorGridId);
     }
-
-    @Test
-    public void truncateEditions(){
-        truncateBooksGrid(editionGridId);
-    }
-
+//
+//    @Test
+//    public void truncateEditions(){
+//        truncateBooksGrid(editionGridId);
+//    }
+//
     @Test
     public void truncateWorks(){
         truncateBooksGrid(workGridId);
