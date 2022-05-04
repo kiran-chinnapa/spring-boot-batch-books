@@ -53,8 +53,10 @@ public class BookProcessor implements ItemProcessor<Map<Object, Object>, String>
     private String searchGrid = "{\n" + "        \"query\": {\n" + "            \"columnFilter\": {\n" + "                \"filters\": [\n" + "                    {\n" + "                        \"column\": \"Key\",\n" + "                        \"operator\": \"LIKE\"\n" + "                    }\n" + "                ]\n" + "            },\n" + "            \"showColumnNamesInResponse\": true\n" + "        }\n" + "    }";
 
     private Map<String, String> getWorkAuthorMap(String authorKeyword, String workKeyword) {
-        authorKeyword= Optional.ofNullable(authorKeyword).orElse("");
-        workKeyword= Optional.ofNullable(workKeyword).orElse("");
+        authorKeyword = (null!= authorKeyword) ? authorKeyword.split("/")[2]:"";
+        workKeyword = (null!= workKeyword) ? workKeyword.split("/")[2]:"";
+//        authorKeyword= Optional.ofNullable(authorKeyword.split("/")[2]).orElse("");
+//        workKeyword= Optional.ofNullable(workKeyword.split("/")[2]).orElse("");
         Map<String, String> filteredRecords = new HashMap<>();
         Map<String, String> records = null;
         try {

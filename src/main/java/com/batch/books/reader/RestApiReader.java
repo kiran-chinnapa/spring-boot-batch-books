@@ -13,7 +13,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import javax.annotation.PostConstruct;
 import java.util.Map;
 
@@ -28,14 +27,14 @@ public class RestApiReader<T> implements ItemReader<Map<Object,Object>> {
     @Value("${grid.qa.authId}")
     private String authId;
 
-    @Value("${books.grid.chunk.size}")
-    private int chunkSize;
+    @Value("${books.grid.edition.row.count}")
+    private int rowCount;
 
     @Value("${grid.books.edition.grid.id}")
     protected String editionGridId;
 
     private String query = "";
-    private int readIndex;
+    private boolean readFlag;
 
     @PostConstruct
     void contruct(){
@@ -43,26 +42,26 @@ public class RestApiReader<T> implements ItemReader<Map<Object,Object>> {
                 "        \"query\": {\n" +
                 "            \"pagination\": {\n" +
                 "                \"startRow\": 1,\n" +
-                "                \"rowCount\": "+chunkSize+"\n" +
+                "                \"rowCount\": "+rowCount+"\n" +
                 "            },\n" +
                 "            \"showColumnNamesInResponse\": true\n" +
                 "        }\n" +
                 "    }";
-       readIndex=0;
+        readFlag=false;
     }
 
 
     @Override
     public Map<Object, Object> read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
         Map response = null;
-        if (readIndex< chunkSize){
+        if (!readFlag){
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "application/json");
             headers.set("Accept", "application/json");
             headers.set("authId", authId);
             response = readRecords(query, headers);
             logger.info("response object ::" + response.size());
-            readIndex++;
+            readFlag = true;
         }
         return response;
     }
