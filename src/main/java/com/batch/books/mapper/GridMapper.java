@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class GridMapper {
@@ -67,13 +68,12 @@ public class GridMapper {
             returnMap.put("Year Latest Edition", parseValue(Optional.ofNullable(jsonMap.get("created")).orElse("")).split("-")[0]);
             returnMap.put("Name", Optional.ofNullable(jsonMap.get("title")).orElse(""));
 
-
-        } else {
-            //logic for book
         }
-
+        jsonMap.entrySet().stream().forEach(entry->{
+            returnMap.put((String) entry.getKey(), parseValue(Optional.ofNullable(entry.getValue()).orElse("")));
+        });
+        logger.info("jsonMap count:"+jsonMap.size()+": returnMap count:"+returnMap.size());
         ((List) ((Map) envMap.get("insert")).get("rows")).add(returnMap);
-
         return jsonObjectMapper.writeValueAsString(envMap);
     }
 
@@ -93,7 +93,9 @@ public class GridMapper {
                     returnList.add(parseValue(ol));
                 }
                 return String.join(",", returnList);
-            } else return String.join(",", ((List) o));
+            }else if(((List) o).get(0) instanceof Integer)
+                return String.join(",", ((List<Integer>) o).stream().map(String::valueOf).collect(Collectors.toList()));
+            else return String.join(",", ((List) o));
         } else return String.valueOf(o);
     }
 

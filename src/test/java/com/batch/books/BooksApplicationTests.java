@@ -33,16 +33,9 @@ class BooksApplicationTests {
     void contextLoads() {
     }
 
-    @BeforeAll
-    static void setGridType(){
-        BooksApplication.gridType= "edition";
-    }
 
     @Autowired
     private FlatFileItemReader<String> flatFileItemReader;
-
-    @Autowired
-    private JobConfiguration jobConfiguration;
 
 //    @Test
 //    public void testFlatFileItemReader() throws Exception{
@@ -52,6 +45,18 @@ class BooksApplicationTests {
 //        log.info(flatFileItemReader.read());
 //    }
 
+    @Value("${grid.books.work.grid.id}")
+    private String workGridId;
+
+    @Value("${grid.books.edition.grid.id}")
+    private String editionGridId;
+
+    @Value("${grid.books.author.grid.id}")
+    private String authorGridId;
+
+    @Value("${grid.books.grid.id}")
+    private String bookGridId;
+
     @Autowired
     private RestApiReader restApiReader;
 
@@ -60,15 +65,42 @@ class BooksApplicationTests {
     private Processor itemProcessor;
 
     @Test
-    public void testMockedItemProcessor() throws Exception {
-//        List<String> bookLines = Files.readAllLines(Paths.get("src/main/resources/dumps/1Work1Author1Edition.txt"));
-        List<String> bookLines = Files.readAllLines(Paths.get("src/main/resources/dumps/Edition.txt"));
-        List<String> gridColumns = Arrays.asList("Author Key");
+    public void testMockedEditionProcessor() throws Exception {
+        List<String> lines = Files.readAllLines(Paths.get("src/main/resources/dumps/Edition.txt"));
         BooksApplication.gridType= "edition";
-        for (String bookLine : bookLines) {
-            String writeJson = itemProcessor.process(bookLine);
-            log.info(writeJson);
-            Assert.assertTrue(writeJson, gridColumns.stream().allMatch(s -> writeJson.contains(s)));
+
+        for (String line : lines) {
+            log.info("input-->"+line);
+            String writeJson = itemProcessor.process(line);
+            log.info("output-->"+writeJson);
+            System.setProperty("gridId", editionGridId);
+            itemWriter.write(Arrays.asList(writeJson));
+        }
+    }
+
+    @Test
+    public void testMockedAuthorProcessor() throws Exception {
+        List<String> lines = Files.readAllLines(Paths.get("src/main/resources/dumps/Author.txt"));
+        BooksApplication.gridType= "author";
+        for (String line : lines) {
+            log.info("input-->"+line);
+            String writeJson = itemProcessor.process(line);
+            log.info("output-->"+writeJson);
+            System.setProperty("gridId", authorGridId);
+            itemWriter.write(Arrays.asList(writeJson));
+        }
+    }
+
+    @Test
+    public void testMockedWorkProcessor() throws Exception {
+        List<String> lines = Files.readAllLines(Paths.get("src/main/resources/dumps/Work.txt"));
+        BooksApplication.gridType= "work";
+        for (String line : lines) {
+            log.info("input-->"+line);
+            String writeJson = itemProcessor.process(line);
+            log.info("output-->"+writeJson);
+            System.setProperty("gridId", workGridId);
+            itemWriter.write(Arrays.asList(writeJson));
         }
     }
 

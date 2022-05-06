@@ -53,7 +53,7 @@ public class JobConfiguration {
     private String filePath="";
 
     @PostConstruct
-    void contructFilePath(){
+    public void contructFilePath(){
         if ("work".equals(BooksApplication.gridType)) {
             System.setProperty("gridId", workGridId);
             filePath = workFilePath;

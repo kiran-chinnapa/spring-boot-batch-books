@@ -55,8 +55,6 @@ public class BookProcessor implements ItemProcessor<Map<Object, Object>, String>
     private Map<String, String> getWorkAuthorMap(String authorKeyword, String workKeyword) {
         authorKeyword = (null!= authorKeyword) ? authorKeyword.split("/")[2]:"";
         workKeyword = (null!= workKeyword) ? workKeyword.split("/")[2]:"";
-//        authorKeyword= Optional.ofNullable(authorKeyword.split("/")[2]).orElse("");
-//        workKeyword= Optional.ofNullable(workKeyword.split("/")[2]).orElse("");
         Map<String, String> filteredRecords = new HashMap<>();
         Map<String, String> records = null;
         try {
