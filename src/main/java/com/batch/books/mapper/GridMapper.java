@@ -72,7 +72,7 @@ public class GridMapper {
         jsonMap.entrySet().stream().forEach(entry->{
             returnMap.put((String) entry.getKey(), parseValue(Optional.ofNullable(entry.getValue()).orElse("")));
         });
-        logger.info("jsonMap count:"+jsonMap.size()+": returnMap count:"+returnMap.size());
+        logger.info("reader field count:"+jsonMap.size()+": writer field count:"+returnMap.size());
         ((List) ((Map) envMap.get("insert")).get("rows")).add(returnMap);
         return jsonObjectMapper.writeValueAsString(envMap);
     }

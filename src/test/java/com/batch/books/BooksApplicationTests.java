@@ -73,8 +73,8 @@ class BooksApplicationTests {
             log.info("input-->"+line);
             String writeJson = itemProcessor.process(line);
             log.info("output-->"+writeJson);
-            System.setProperty("gridId", editionGridId);
-            itemWriter.write(Arrays.asList(writeJson));
+//            System.setProperty("gridId", editionGridId);
+//            itemWriter.write(Arrays.asList(writeJson));
         }
     }
 
@@ -86,8 +86,8 @@ class BooksApplicationTests {
             log.info("input-->"+line);
             String writeJson = itemProcessor.process(line);
             log.info("output-->"+writeJson);
-            System.setProperty("gridId", authorGridId);
-            itemWriter.write(Arrays.asList(writeJson));
+//            System.setProperty("gridId", authorGridId);
+//            itemWriter.write(Arrays.asList(writeJson));
         }
     }
 
@@ -99,8 +99,8 @@ class BooksApplicationTests {
             log.info("input-->"+line);
             String writeJson = itemProcessor.process(line);
             log.info("output-->"+writeJson);
-            System.setProperty("gridId", workGridId);
-            itemWriter.write(Arrays.asList(writeJson));
+//            System.setProperty("gridId", workGridId);
+//            itemWriter.write(Arrays.asList(writeJson));
         }
     }
 
@@ -163,9 +163,12 @@ class BooksApplicationTests {
 
     @Test
     public void testBookProcessor() throws Exception {
+        BooksApplication.gridType= "book";
         Map map = restApiReader.read();
         String json = bookProcessor.process(map);
         log.info("BookProcessor JSON -->"+ json);
+        System.setProperty("gridId", bookGridId);
+        itemWriter.write(Arrays.asList(json));
         Assert.assertTrue(null != json && json.length()>0);
     }
 }

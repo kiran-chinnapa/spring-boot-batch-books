@@ -47,6 +47,7 @@ public class BookProcessor implements ItemProcessor<Map<Object, Object>, String>
         Map<Object, Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);
         ((List) ((Map) envMap.get("insert")).get("rows")).addAll(records);
         //return a single json string with all the rows
+        logger.info("writer fields count:"+records.get(0).size());
         return jsonObjectMapper.writeValueAsString(envMap);
     }
 
