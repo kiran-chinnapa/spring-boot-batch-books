@@ -46,12 +46,12 @@ public class BooksApplicationIntegrationTest {
     public void truncateAuthors(){
         truncateBooksGrid(authorGridId);
     }
-//
-//    @Test
-//    public void truncateEditions(){
-//        truncateBooksGrid(editionGridId);
-//    }
-//
+
+    @Test
+    public void truncateEditions(){
+        truncateBooksGrid(editionGridId);
+    }
+
     @Test
     public void truncateWorks(){
         truncateBooksGrid(workGridId);

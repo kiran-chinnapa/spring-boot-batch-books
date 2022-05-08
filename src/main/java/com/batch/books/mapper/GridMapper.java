@@ -79,6 +79,7 @@ public class GridMapper {
 
     private String parseValue(Object o) {
         if (o instanceof Map) {
+            if (((Map) o).values().size()==0) return parseValue("");
             Collection c = ((Map) o).values();
             Iterator i = c.iterator();
             Object lastElement = i.next();
