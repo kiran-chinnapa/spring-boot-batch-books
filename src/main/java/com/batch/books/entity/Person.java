@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Entity
 @NamedQuery(name="find_all_persons", query="select p from Person p")
-@NamedQuery(name="find_person_using_like",query="select p from Person p where p.name like ?1")
+@NamedQuery(name="find_person_using_like",query="select p from Person p where p.name like :param")
 public class Person {
 
     @Id

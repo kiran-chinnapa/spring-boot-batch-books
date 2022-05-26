@@ -23,7 +23,7 @@ public class PersonJPARepository {
 
     public List<Person> findByWildCard(String name) {
         TypedQuery<Person> namedQuery = entityManager.createNamedQuery("find_person_using_like", Person.class);
-        namedQuery.setParameter(1,"%"+name+"%");
+        namedQuery.setParameter("param","%"+name+"%");
         return namedQuery.getResultList();
     }
 

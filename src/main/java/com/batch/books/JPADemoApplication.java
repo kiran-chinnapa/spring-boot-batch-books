@@ -24,6 +24,6 @@ public class JPADemoApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         logger.info("jpa named query-->{}",jpaRepository.findById(4));
-        logger.info("jpa named wild card query-->{}",jpaRepository.findByWildCard("a"));
+        logger.info("jpa named wild card query-->{}",jpaRepository.findByWildCard("i"));
     }
 }
