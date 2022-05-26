@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
@@ -76,11 +79,17 @@ public class JobConfiguration {
                    ItemProcessor<String, String> mapItemProcessor,
                    ItemWriter<String> mapItemWriter) {
 
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(5);
+        taskExecutor.setMaxPoolSize(5);
+        taskExecutor.afterPropertiesSet();
+
         Step step = stepBuilderFactory.get("fileReader-ETL")
                 .<String, String>chunk(chunkSize)
                 .reader(mapItemReader)
                 .processor(mapItemProcessor)
                 .writer(mapItemWriter)
+                .taskExecutor(taskExecutor)
                 .build();
 
         return jobBuilderFactory.get("fileReader-Load")
