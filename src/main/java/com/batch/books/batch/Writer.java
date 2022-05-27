@@ -10,11 +10,22 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 
 @Component
 public class Writer implements ItemWriter<String> {
+
+//    @PostConstruct
+//    void truncateFile() throws IOException {
+//        Files.write(Paths.get(fileName), new byte[0], StandardOpenOption.TRUNCATE_EXISTING);
+//    }
 
     private Logger logger = LoggerFactory.getLogger(Writer.class);
 
@@ -24,15 +35,19 @@ public class Writer implements ItemWriter<String> {
     @Value("${grid.qa.authId}")
     private String authId;
 
+    private String fileName = "src/main/resources/out.json";
+
     @Override
     public void write(List<? extends String> items) throws Exception {
+        logger.info("........in Writer.......");
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "application/json");
         headers.set("authId", authId);
 
-        items.stream().forEach((String bookRecord) -> postToApi(bookRecord, headers));
+//        items.stream().forEach((String bookRecord) -> postToApi(bookRecord, headers));
+        items.stream().forEach((String bookRecord) -> writeToFile(bookRecord, fileName));
     }
 
     private void postToApi(String json, HttpHeaders headers) {
@@ -44,5 +59,14 @@ public class Writer implements ItemWriter<String> {
                 String.class
         );
         logger.info("response object ::" + response);
+    }
+
+    private void writeToFile(String json, String fileName)  {
+        try {
+            logger.info("............in writeToFile.......");
+            Files.write(Paths.get(fileName), (json+"\r\n").getBytes(), StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

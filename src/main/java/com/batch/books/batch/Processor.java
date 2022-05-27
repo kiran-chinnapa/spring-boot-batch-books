@@ -28,6 +28,7 @@ public class Processor implements ItemProcessor<String, String> {
 
     @Override
     public String process(String item) throws Exception {
+        logger.info("........in Processor.......");
         String key = item.substring(0, item.indexOf('{')).split("\t")[1];
         String jsonStr = item.substring(item.indexOf('{'));
         Map<Object, Object> envMap = jsonObjectMapper.readValue(addRowEnvelope, Map.class);

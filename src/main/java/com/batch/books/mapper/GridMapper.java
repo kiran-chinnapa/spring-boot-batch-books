@@ -54,7 +54,7 @@ public class GridMapper {
             returnMap.put("Name", Optional.ofNullable(jsonMap.get("title")).orElse(""));
 
         } else if ("author".equals(BooksApplication.gridType)) {
-            if (null != key && !editionAuthorKeys.contains(key.split("/")[2])) return null;
+//            if (null != key && !editionAuthorKeys.contains(key.split("/")[2])) return null;
 
             returnMap.put("Author", Optional.ofNullable(jsonMap.get("name")).orElse(""));
             returnMap.put("Year Latest Edition", parseValue(Optional.ofNullable(jsonMap.get("created")).orElse("")).split("-")[0]);

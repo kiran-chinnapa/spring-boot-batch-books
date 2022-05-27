@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@RestController
+//@RestController
 public class LaunchController {
 
     Logger log = LoggerFactory.getLogger(LaunchController.class);
