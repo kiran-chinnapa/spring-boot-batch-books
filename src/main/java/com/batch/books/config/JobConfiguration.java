@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@Configuration
-@EnableBatchProcessing
+//@Configuration
+//@EnableBatchProcessing
 public class JobConfiguration {
 
     @Value("${books.grid.chunk.size}")
@@ -112,9 +112,10 @@ public class JobConfiguration {
                 .build();
 
         return jobBuilderFactory.get("fileReader-Load")
-//                .incrementer(new RunIdIncrementer())
-                .start(step0(stepBuilderFactory))
-                .next(step)
+                .incrementer(new RunIdIncrementer())
+                .start(step)
+//                .start(step0(stepBuilderFactory))
+//                .next(step)
                 .build();
 
     }
